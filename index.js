@@ -27,7 +27,7 @@ async function run() {
     const ProductsCollection = client
       .db("Merch-Matrix")
       .collection("AllProductsData");
-    await client.connect();
+    // await client.connect();
 
     // Route to get all products data
     app.get("/allProducts", async (req, res) => {
