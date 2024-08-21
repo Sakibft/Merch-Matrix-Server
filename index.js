@@ -31,8 +31,28 @@ async function run() {
 
     // Route to get all products data
     app.get("/allProducts", async (req, res) => {
-      const allProducts = await ProductsCollection.find().toArray();
-      res.send(allProducts);
+      try {
+        const currentPage = parseInt(req.query.page) || 0;
+        const size = parseInt(req.query.size) || 10;
+    
+        // Get the total number of documents
+        const totalProducts = await ProductsCollection.countDocuments();
+    
+        // Fetch the paginated data
+        const allProducts = await ProductsCollection.find()
+          .skip(currentPage * size)
+          .limit(size)
+          .toArray();
+    
+        // Send both the paginated data and the total number of products
+        res.send({
+          totalProducts,  // Total number of products (for pagination calculation)
+          allProducts,    // Paginated products for the current page
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+      }
     });
     //  Route to get Search data
     app.get("/search/:search", async (req, res) => {
